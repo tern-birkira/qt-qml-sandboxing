@@ -1,9 +1,13 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include "editor_grid.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+    // Dummy data: all known track label fields keyed by field-name.
+    QMap<QString, LabelField> fields = createDummyLabelFields(&app);
 
     QQmlApplicationEngine engine;
     QObject::connect(
@@ -16,3 +20,4 @@ int main(int argc, char *argv[])
 
     return QGuiApplication::exec();
 }
+

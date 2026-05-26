@@ -1,0 +1,4 @@
+{
+  "qt-qml.qmlls.serverPath": "/home/birkira/Qt/6.11.1/gcc_64/bin/qmlls",
+  "qmlls.buildDir": "/home/birkira/repos/qt_qml_sandboxing/build"
+}

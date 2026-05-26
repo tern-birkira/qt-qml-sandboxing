@@ -2,13 +2,19 @@ cmake_minimum_required(VERSION 3.16)
 
 project(qt_qml_sandboxing VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_PREFIX_PATH "/home/birkira/Qt/6.11.1/gcc_64")
+set(QT_QML_GENERATE_QMLLS_INI ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(appqt_qml_sandboxing
+    editor_grid.h
+    editor_grid.cpp
+    editor_line_model.h
+    editor_line_model.cpp
     main.cpp
 )
 
