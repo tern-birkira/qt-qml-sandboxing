@@ -3,6 +3,7 @@
 #include <QAbstractListModel>
 #include <QString>
 #include <QMap>
+#include <qqmlintegration.h>
 #include "label_field.h"
 #include "editor_line_model.h"
 
@@ -17,10 +18,12 @@ class EditorTrackLabelModel : public QAbstractListModel {
     Model that contains List of Track Label Lines
     */
     Q_OBJECT
+    QML_ELEMENT
 public:
 
     enum EditorTrackLabelRoles {
-        TrackLine = Qt::UserRole
+        TrackLine = Qt::UserRole + 1,
+        Think
     };
 
     explicit EditorTrackLabelModel( QObject *parent = nullptr);

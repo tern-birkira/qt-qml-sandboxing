@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "editor_grid.h"
+#include "models/editor_grid.h"
+#include <QQmlContext>
 
 int main(int argc, char *argv[])
 {
@@ -8,6 +9,7 @@ int main(int argc, char *argv[])
 
     // Dummy data: all known track label fields keyed by field-name.
     QMap<QString, LabelField> fields = createDummyLabelFields(&app);
+
 
     QQmlApplicationEngine engine;
     QObject::connect(
@@ -17,6 +19,10 @@ int main(int argc, char *argv[])
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.loadFromModule("qt_qml_sandboxing", "Main");
+
+    // EditorTrackLabelModel trackLabel;
+    // engine.rootContext()->setContextProperty("trackLabel", &trackLabel);
+
 
     return QGuiApplication::exec();
 }

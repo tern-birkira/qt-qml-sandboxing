@@ -4,6 +4,7 @@ project(qt_qml_sandboxing VERSION 0.1 LANGUAGES CXX)
 
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_PREFIX_PATH "/home/birkira/Qt/6.11.1/gcc_64")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
@@ -11,17 +12,27 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(appqt_qml_sandboxing
-    editor_grid.h
-    editor_grid.cpp
-    editor_line_model.h
-    editor_line_model.cpp
-    main.cpp
+    src/models/editor_grid.h
+    src/models/editor_grid.cpp
+    src/models/editor_line_model.h
+    src/models/editor_line_model.cpp
+    src/models/label_field.h
+    src/main.cpp
 )
 
 qt_add_qml_module(appqt_qml_sandboxing
-    URI qt_qml_sandboxing
+    URI "birkis.models"
     QML_FILES
-        Main.qml
+        src/Main.qml
+        src/ui/TrackLabel.qml
+        src/ui/TrackLabelField.qml
+        src/ui/TrackLabelList.qml
+    SOURCES
+        src/models/editor_grid.h
+        src/models/editor_grid.cpp
+        src/models/editor_line_model.h
+        src/models/editor_line_model.cpp
+
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
