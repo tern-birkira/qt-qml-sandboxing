@@ -11,7 +11,6 @@
 // Returns a map of all known track label field names → LabelField instances
 // pre-populated with realistic dummy values.
 // Ownership: caller takes ownership of the LabelField pointers.
-QMap<QString, LabelField> createDummyLabelFields(QObject *parent = nullptr);
 
 class EditorTrackLabelModel : public QAbstractListModel {
     /*

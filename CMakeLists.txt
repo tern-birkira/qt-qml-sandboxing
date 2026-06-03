@@ -35,6 +35,11 @@ qt_add_qml_module(appqt_qml_sandboxing
 
 )
 
+# Only enable for Debug builds
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(appqt_qml_sandboxing PRIVATE QT_QML_DEBUG)
+endif()
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -49,6 +54,8 @@ set_target_properties(appqt_qml_sandboxing PROPERTIES
 target_link_libraries(appqt_qml_sandboxing
     PRIVATE Qt6::Quick
 )
+
+target_include_directories(appqt_qml_sandboxing PRIVATE src/models)
 
 install(TARGETS appqt_qml_sandboxing
     BUNDLE DESTINATION .

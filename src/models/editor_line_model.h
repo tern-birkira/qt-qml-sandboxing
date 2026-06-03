@@ -11,7 +11,7 @@ class EditorLineModel : public QAbstractListModel {
     Model that stores a List of Fields
     */
     Q_OBJECT
-    QML_ELEMENT
+    QML_ANONYMOUS
 public:
     enum EditorLineModelRole {
         Label = Qt::UserRole + 1

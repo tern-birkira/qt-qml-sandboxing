@@ -13,13 +13,15 @@ Item {
         anchors.fill: parent
         model: tl_model
 
-        delegate: Column {
+        delegate: Row {
             width:  ListView.view.width
             height: childrenRect.height
 
+            required property TrackLabel trackLine
+
             TrackLabelList {
                 width: parent.width
-                model: model.trackLine
+                model: trackLine
             }
         }
     }

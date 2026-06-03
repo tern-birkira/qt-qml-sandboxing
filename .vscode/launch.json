@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C++ Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/appqt_qml_sandboxing",
+      "args": [
+        "-qmljsdebugger=host:127.0.0.1,port:3768,services:DebugMessages,QmlDebugger,V8Debugger,QmlInspector"
+      ],
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        { "name": "QML_IMPORT_PATH", "value": "${workspaceFolder}/qml" }
+      ],
+      "preLaunchTask": "cmake-build"
+    },
+    {
+      "name": "QML Debug",
+      "type": "qml",
+      "request": "attach",
+      "host": "localhost",
+      "port": "3768"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "C++ + QML Debug",
+      "configurations": ["QML Debug", "C++ Debug"],
+      "stopAll": true
+    }
+  ]
+}
