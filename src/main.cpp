@@ -1,6 +1,5 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "models/editor_grid.h"
 #include <QQmlContext>
 
 int main(int argc, char *argv[])
@@ -14,7 +13,7 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("birkis.models", "Main");
+    engine.loadFromModule("sandboxing", "Main");
 
     // EditorTrackLabelModel trackLabel;
     // engine.rootContext()->setContextProperty("trackLabel", &trackLabel);

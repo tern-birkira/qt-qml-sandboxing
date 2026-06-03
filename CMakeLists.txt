@@ -7,33 +7,21 @@ set(CMAKE_PREFIX_PATH "/home/birkira/Qt/6.11.1/gcc_64")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
+
 find_package(Qt6 REQUIRED COMPONENTS Quick)
+add_subdirectory(src/modules/tracklabel)
+add_subdirectory(src/libs/dummyData)
+
 
 qt_standard_project_setup(REQUIRES 6.10)
 
-qt_add_executable(appqt_qml_sandboxing
-    src/models/editor_grid.h
-    src/models/editor_grid.cpp
-    src/models/editor_line_model.h
-    src/models/editor_line_model.cpp
-    src/models/label_field.h
-    src/main.cpp
+qt_add_executable("app${PROJECT_NAME}" src/main.cpp)
+
+qt6_add_qml_module("app${PROJECT_NAME}"
+    URI sandboxing
+    QML_FILES src/Main.qml
 )
 
-qt_add_qml_module(appqt_qml_sandboxing
-    URI "birkis.models"
-    QML_FILES
-        src/Main.qml
-        src/ui/TrackLabel.qml
-        src/ui/TrackLabelField.qml
-        src/ui/TrackLabelList.qml
-    SOURCES
-        src/models/editor_grid.h
-        src/models/editor_grid.cpp
-        src/models/editor_line_model.h
-        src/models/editor_line_model.cpp
-
-)
 
 # Only enable for Debug builds
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -51,11 +39,15 @@ set_target_properties(appqt_qml_sandboxing PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(appqt_qml_sandboxing
-    PRIVATE Qt6::Quick
+target_link_libraries("app${PROJECT_NAME}"
+    PRIVATE
+        Qt6::Quick
+        Qt6::Qml
+        Qt6::Core
+        TrackLabel
 )
 
-target_include_directories(appqt_qml_sandboxing PRIVATE src/models)
+target_include_directories("app${PROJECT_NAME}" PRIVATE src/models)
 
 install(TARGETS appqt_qml_sandboxing
     BUNDLE DESTINATION .

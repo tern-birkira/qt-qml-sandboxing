@@ -1,5 +1,6 @@
 import QtQuick
-import birkis.models
+import Tracklabel 1.0
+
 
 Window {
     width: 640
@@ -7,11 +8,4 @@ Window {
     visible: true
     title: qsTr("Hello World")
     color: "black"
-    TrackLabel {
-    }
-    Timer {
-        interval: 10000   // 5 seconds after launch
-        running: true
-        onTriggered: console.log("Timer fired — debugger connected?")
-    }
 }
