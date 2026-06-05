@@ -5,6 +5,7 @@ set(CMAKE_AUTOMOC ON)
 add_subdirectory(models)
 add_subdirectory(ui)
 
+
 qt_add_qml_module(TrackLabel
     URI TrackLabel
     VERSION 1.0

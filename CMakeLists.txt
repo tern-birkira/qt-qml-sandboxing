@@ -8,6 +8,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
 
+
+
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 add_subdirectory(src/modules/tracklabel)
 add_subdirectory(src/libs/dummyData)
