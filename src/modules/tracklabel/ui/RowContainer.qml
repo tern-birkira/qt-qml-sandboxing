@@ -1,5 +1,7 @@
+pragma ComponentBehavior: Bound
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+// import TrackLabelModels 1.0
 
 // ─────────────────────────────────────────────
 //  Outer delegate — one row in the layout.
@@ -21,7 +23,9 @@ Item {
 
     // ── Row index for passing down to cells ──
     
-    readonly property int rowIndex: index   // ListView injects 'index'
+    // readonly property int rowIndex: index   // ListView injects 'index'
+    required property int index // ListView inject index (rowIndex)
+    
 
     // ── Row of cells ──
     Row {
@@ -39,10 +43,10 @@ Item {
             // dataChanged signals automatically.
 
 
-            model: cellModel
+            model: model.cellModel
 
             delegate: TrackLabelField {
-                rowIndex: root.rowIndex   // pass row coord down to each cell
+                rowIndex: root.index   // pass row coord down to each cell
             }
         }
     }
@@ -58,7 +62,7 @@ Item {
         text:   "+"
         font.pixelSize: 16
 
-        onClicked: layoutModel.appendCell(rowIndex, "New")
+        onClicked: ListView.view.model.appendCell(root.index, "New")
     }
 
     // ── Row separator ──

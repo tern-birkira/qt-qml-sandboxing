@@ -1,5 +1,5 @@
 import QtQuick
-import TrackLabelModels 1.0
+import TrackLabel.Models 1.0
 
 Item {
 
@@ -7,8 +7,9 @@ Item {
     ListView {
         id: rowListView
 
+
         // layoutModel is the RowListModel* from context
-        model: layoutModel
+        model: RowListModel {}
 
         // Delegate is our RowContainer which holds a Repeater internally
         delegate: RowContainer {}

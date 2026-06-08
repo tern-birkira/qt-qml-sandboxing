@@ -11,15 +11,12 @@ find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 # )
 
 qt_add_qml_module(TrackLabelModels
-    URI TrackLabelModels
+    URI TrackLabel.Models
     VERSION 1.0
     SOURCES
-        RowCellModel.h
-        RowCellModel.cpp
-        RowListModel.h
-        RowListModel.cpp
+        RowCellModel.h  RowCellModel.cpp
+        RowListModel.h  RowListModel.cpp
         TrackLabelField.h
-    IMPORT_PATH "${CMAKE_BINARY_DIR}"
 )
 
 target_link_libraries(TrackLabelModels

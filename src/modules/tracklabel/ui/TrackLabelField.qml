@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import TrackLabel.Models 1.0
 
 // ─────────────────────────────────────────────
 //  Inner delegate — one TrackLabelField cell.
@@ -17,13 +18,21 @@ import QtQuick.Controls 2.15
 // ─────────────────────────────────────────────
 Rectangle {
     id: root
+    // injected values from model
+    required property int fieldWidth
+    required property string fieldColor
+    required property bool isActive
+    required property int index // default injected value of curr column
+    required property int label 
+    required property RowListModel rowlistmodel
+    
 
     // ── Geometry ──
     width:  fieldWidth   // role from RowCellModel
     height: 48
 
     // ── Appearance ──
-    color:   fieldColor  // role from RowCellModel
+    color:  fieldColor  // role from RowCellModel
     opacity: isActive ? 1.0 : 0.4
     radius:  4
     border.color: Qt.darker(fieldColor, 1.3)
@@ -32,12 +41,12 @@ Rectangle {
     // ── Expose cell coords upward so actions know where they are ──
     // rowIndex is set by the outer delegate (see RowContainer.qml)
     property int rowIndex: 0
-    property int colIndex: index   // Repeater injects 'index'
+    property alias colIndex: root.index  // rename injected col index
 
     // ── Label ──
     Text {
         anchors.centerIn: parent
-        text: label          // role from RowCellModel
+        text: root.label          // role from RowCellModel
         elide: Text.ElideRight
         width: parent.width - 8
         horizontalAlignment: Text.AlignHCenter
@@ -68,13 +77,13 @@ Rectangle {
         id: labelEdit
         anchors.centerIn: parent
         width: parent.width - 8
-        text: label
+        text: root.label
         visible: false
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 13
 
         onEditingFinished: {
-            layoutModel.setCellLabel(rowIndex, colIndex, text)
+            root.rowlistmodel.setCellLabel(root.rowIndex, root.colIndex, text)
             visible = false
         }
         Keys.onEscapePressed: {
@@ -88,21 +97,21 @@ Rectangle {
 
         Action {
             text: "Insert cell before"
-            onTriggered: layoutModel.insertCell(rowIndex, colIndex, "New")
+            onTriggered: root.rowlistmodel.insertCell(root.rowIndex, root.colIndex, "New")
         }
         Action {
             text: "Insert cell after"
-            onTriggered: layoutModel.insertCell(rowIndex, colIndex + 1, "New")
+            onTriggered: root.rowlistmodel.insertCell(root.rowIndex, root.colIndex + 1, "New")
         }
         MenuSeparator {}
         Action {
             text: "Remove cell"
-            onTriggered: layoutModel.removeCell(rowIndex, colIndex)
+            onTriggered: root.rowlistmodel.removeCell(root.rowIndex, root.colIndex)
         }
         MenuSeparator {}
         Action {
-            text: isActive ? "Deactivate" : "Activate"
-            onTriggered: layoutModel.setCellActive(rowIndex, colIndex, !isActive)
+            text: root.isActive ? "Deactivate" : "Activate"
+            onTriggered: root.rowlistmodel.setCellActive(root.rowIndex, root.colIndex, !root.isActive)
         }
     }
 }
