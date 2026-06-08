@@ -11,11 +11,11 @@ set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
+
+qt_standard_project_setup(REQUIRES 6.10)
 add_subdirectory(src/modules/tracklabel)
 add_subdirectory(src/libs/dummyData)
 
-
-qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable("app${PROJECT_NAME}" src/main.cpp)
 
@@ -47,6 +47,8 @@ target_link_libraries("app${PROJECT_NAME}"
         Qt6::Qml
         Qt6::Core
         TrackLabel
+        TrackLabelModels
+        TrackLabelUI
 )
 
 target_include_directories("app${PROJECT_NAME}" PRIVATE src/models)

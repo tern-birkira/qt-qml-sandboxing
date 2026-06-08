@@ -1,5 +1,5 @@
 import QtQuick
-import Tracklabel 1.0
+import TrackLabel 1.0
 
 
 Window {
@@ -8,4 +8,8 @@ Window {
     visible: true
     title: qsTr("Hello World")
     color: "black"
+
+    MainTrackLabel {
+        // anchors.fill: parent
+    }
 }

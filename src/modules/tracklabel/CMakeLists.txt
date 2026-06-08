@@ -10,13 +10,13 @@ qt_add_qml_module(TrackLabel
     URI TrackLabel
     VERSION 1.0
     QML_FILES
-        mainTrackLabel.qml
+        MainTrackLabel.qml
 )
 
 target_link_libraries(TrackLabelplugin
     PRIVATE
-        TrackLabel.Models
-        TrackLabel.UI
+        TrackLabelModels
+        TrackLabelUI
 )
 
 target_include_directories(TrackLabelplugin

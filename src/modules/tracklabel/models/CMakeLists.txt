@@ -1,4 +1,3 @@
-# Add this at the top
 find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 
 # # Create static library for models
