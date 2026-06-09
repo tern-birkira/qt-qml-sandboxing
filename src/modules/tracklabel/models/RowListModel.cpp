@@ -11,6 +11,10 @@ namespace asd::editor::tracklabel
 {
 RowListModel::RowListModel(QVector<RowCellModel*> rows, QObject* parent)
     : m_rows(rows), QAbstractListModel(parent)
+/*
+    Bare bones allocation, emits no signals, only sets internal data
+    because view isn't connected to model during instatation.
+*/
 {}
 
 RowListModel::~RowListModel()
@@ -51,6 +55,10 @@ QHash<int, QByteArray> RowListModel::roleNames() const
 }
 
 bool RowListModel::insertRows(int position, int count, const QModelIndex &parent) 
+/*
+    We need a more generic function that takes in RowCellModel data, 
+    That still uses beginInsertRows and endInsertRows (when connected to view)
+*/
 {
     if (count <= 0 || position < 0 || position > m_rows.size()) {
         return false;
