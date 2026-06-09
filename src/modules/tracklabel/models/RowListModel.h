@@ -2,7 +2,9 @@
 #include <QAbstractListModel>
 #include <QVector>
 #include <QQmlEngine>
+#include <qlist.h>
 #include "RowCellModel.h"
+
 
 // ─────────────────────────────────────────────
 //  Outer model — owns all RowCellModel* rows.
@@ -10,6 +12,9 @@
 //  Also the single entry point for all
 //  structural mutations from QML.
 // ─────────────────────────────────────────────
+
+namespace asd::editor::tracklabel
+{
 class RowListModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -21,7 +26,7 @@ public:
         RowIdRole                            // stable per-row id
     };
 
-    explicit RowListModel(QObject* parent = nullptr);
+    explicit RowListModel(QVector<RowCellModel*> rows, QObject* parent = nullptr);
     ~RowListModel() override;
 
     // ── QAbstractListModel interface ──
@@ -29,25 +34,18 @@ public:
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    //  ── Built in model funcitons (causes updates to Views) ──
+    bool insertRows(int position, int count, const QModelIndex &parent) override;
+    
+
     // ── Row-level mutations ──
     Q_INVOKABLE void appendRow();
-    Q_INVOKABLE void insertRow(int row);
     Q_INVOKABLE void removeRow(int row);
 
-    // ── Cell-level mutations (called from QML delegates) ──
-    Q_INVOKABLE void appendCell  (int row, const QString& label);
-    Q_INVOKABLE void insertCell  (int row, int col, const QString& label);
-    Q_INVOKABLE void removeCell  (int row, int col);
-    Q_INVOKABLE void moveCell    (int fromRow, int fromCol, int toRow, int toCol);
 
-    // ── Cell data update ──
-    Q_INVOKABLE void setCellLabel (int row, int col, const QString& label);
-    Q_INVOKABLE void setCellWidth (int row, int col, int width);
-    Q_INVOKABLE void setCellActive(int row, int col, bool active);
-
-    // ── Persistence ──
-    Q_INVOKABLE bool saveToFile(const QString& path) const;
-    Q_INVOKABLE bool loadFromFile(const QString& path);
+private slots:
+    // Internal handler capturing cross-model move requests
+    void handleMoveFieldRequest(RowCellModel* sourceRow, int colIndex, RowCellModel::MoveDirection direction);
 
 private:
     // ── Helpers ──
@@ -55,9 +53,11 @@ private:
     bool    validCell(int row, int col) const;
     void    notifyRowChanged(int row);
     int     nextCellId();
+    void    moveCell(int fromRow, int fromCol, int toRow, int toCol);
 
     QVector<RowCellModel*> m_rows;
     int m_nextId = 0;
     int m_nextRowId = 0;
     QVector<int> m_rowIds;
 };
+} // namespace asd::editor::tracklabel

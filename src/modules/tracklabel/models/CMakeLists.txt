@@ -15,7 +15,9 @@ qt_add_qml_module(TrackLabelModels
     SOURCES
         RowCellModel.h  RowCellModel.cpp
         RowListModel.h  RowListModel.cpp
-        TrackLabelField.h
+        FieldAppearence.h  FieldAppearence.cpp
+        FieldInterface.h  FieldInterface.cpp
+        FieldText.h  FieldText.cpp
 )
 
 target_link_libraries(TrackLabelModels
