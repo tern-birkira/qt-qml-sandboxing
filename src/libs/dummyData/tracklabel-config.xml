@@ -1,0 +1,291 @@
+<instances xmlns:tlabel="http://tern.is/polaris-asd/tracklabel">
+    <instance id="polaris-asd-tracklabel" class-mapping-reference="TrackLabelConfig">
+        <tlabel:configuration>
+            <tlabel:tracklabel-configuration path="/usr/share/polaris/.polaris-asd/" radio-callsign-filepath="/usr/share/polaris/config/RadioCallsign" has-external-transfer="false" has-flight-rule-change="true" >
+                <tlabel:tracklabel tracklabel-type="Uncorrelated">
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="ssrCodeAndCallsign" toggleable="false" font-adjustment="+4" >
+                            <tlabel:context-menu-item context-menu="CallsignMenu.Uncorrelated" mouse="right" />
+                        </tlabel:field>
+                        <tlabel:field field-name="snsInhibitedSsrDot" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="currentFlightLevel" toggleable="false" placeholder="AFL" />
+                        <tlabel:field field-name="verticalRateArrow" toggleable="false" left-margin="-4" fixed-width-in-characters="1" />
+                        <tlabel:field field-name="verticalRate" toggleable="false" left-margin="-5" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="speed" toggleable="true" only-show-on-focus="true" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="indicatedAirspeed" toggleable="true" only-show-on-focus="true" prefix="I" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="freeText">
+                            <tlabel:edit on-mouse="right"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                </tlabel:tracklabel>
+                <tlabel:tracklabel tracklabel-type="Correlated">
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="callsign" font-adjustment="+4" visible-in-holding="true">
+                            <tlabel:context-menu-item context-menu="ProfileMenus.OpenProfileMenu" mouse="left" />
+                            <tlabel:context-menu-item context-menu="CallsignMenu.Correlated" mouse="right"/>
+		    	        </tlabel:field>
+                        <tlabel:field field-name="snsInhibitedSsrDot" />
+                        <tlabel:field field-name="currentControllingSector" placeholder="CS" only-show-on-focus="true">
+                            <tlabel:context-menu-item context-menu="SectorMenu.Correlated" mouse="right"/>
+                            <!-- TODO: Move this field and finish its configuration when "column 0" is possible -->
+                        </tlabel:field>
+                        <tlabel:field field-name="flightRule">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}" >
+                                <tlabel:show-if flight-property="flightRule" property-value="${pasd.tar.tracklabel.flightrules.visible}" />
+                            </tlabel:visibility>
+                        </tlabel:field>
+                        <tlabel:field field-name="numberOfAircraft">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="aircraftType" toggleable="true" only-show-on-focus="true"/>
+                        <tlabel:field field-name="wakeTurbulenceCategory" toggleable="true" left-margin="-4">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="approachSequenceNumber" toggleable="true" placeholder="#_">
+                            <tlabel:context-menu-item context-menu="ManualSequencingMenu" mouse="right"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}">
+                                <tlabel:show-if flight-property="destinationAerodrome" property-value="${pasd.tar.tracklabel.manual.sequencing.aerodromes}" />
+                            </tlabel:visibility>
+                        </tlabel:field>
+                        <tlabel:field field-name="destinationRunway" toggleable="true" left-margin="-8">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.DestinationRWYMenu" mouse="right"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.aerodrome.info.relevant.cs}"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="currentFlightLevel" placeholder="AFL" visible-in-holding="true"> <!--  Might need to change this to measuredFlightLevel? -->
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.AFLMenu" mouse="right" menu-position="left"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="verticalRateArrow" left-margin="-8" fixed-width-in-characters="1">
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="verticalRate" left-margin="-4">
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="clearedFlightLevelOrApproach" placeholder="CFL">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.CFLMenu" mouse="right" searchable="true"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs} Redundant"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="assignedVerticalRate" placeholder="ARC">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.ARCMenu" mouse="right" searchable="true" menu-position="right"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="selectedAltitude" toggleable="true" placeholder="SFL">
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="speed" placeholder="SPD">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.ASPMenu" mouse="right" searchable="true"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="clearedSpeed" placeholder="ASP">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.ASPMenu" mouse="right" searchable="true"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <!-- TODO: conditional SPD -->
+                        <tlabel:field field-name="indicatedAirspeed" prefix="I" placeholder="DSPD" toggleable="true">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs} Redundant"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="clearedApproach"  placeholder="APP" toggleable="true">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.APPMenu" mouse="right" />
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs} Redundant"/>
+                        </tlabel:field>
+                        </tlabel:tracklabel-line>
+                        <tlabel:tracklabel-line>
+                            <tlabel:field field-name="currentRouteElement" placeholder="ROUTE">
+                                <tlabel:context-menu-item context-menu="ClearanceMenu.WaypointMenu" mouse="right" menu-position="left"/>
+                                <tlabel:context-menu-item context-menu="ClearanceMenu.HeadingMenu" mouse="left" menu-position="left" searchable="true"/>
+                                <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                            </tlabel:field>
+                            <tlabel:field field-name="nextRouteElement" prefix=">" toggleable="true" only-show-on-focus="true">
+                                <tlabel:context-menu-item context-menu="ClearanceMenu.WaypointMenu" mouse="right" menu-position="left"/>
+                            </tlabel:field>
+                            <tlabel:field field-name="magneticHeading" placeholder="DHDG" toggleable="true" only-show-on-focus="true">
+                                <tlabel:context-menu-item context-menu="ClearanceMenu.HeadingMenu" mouse="right" searchable="true" menu-position="left"/>
+                            </tlabel:field>
+                            <tlabel:field field-name="barometricPressureSettings" toggleable="true">
+                                <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                            </tlabel:field>
+                        </tlabel:tracklabel-line>
+                        <tlabel:tracklabel-line>
+                        <tlabel:field field-name="destinationAerodrome" toggleable="true">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}">
+                                    <tlabel:show-if flight-property="destinationAerodrome" property-value="BIRK" />
+                                </tlabel:visibility>
+                            </tlabel:field>
+                        <tlabel:field field-name="freeText" left-margin="-2">
+                            <tlabel:edit on-mouse="right"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                </tlabel:tracklabel>
+                <tlabel:tracklabel tracklabel-type="FlightPlanTrack">
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="callsign" font-adjustment="+4" visible-in-holding="true">
+                            <tlabel:context-menu-item context-menu="ProfileMenus.OpenProfileMenu" mouse="left" />
+                            <tlabel:context-menu-item context-menu="CallsignMenu.Correlated" mouse="right"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="currentControllingSector" placeholder="CS" only-show-on-focus="true">
+                            <tlabel:context-menu-item context-menu="SectorMenu.Correlated" mouse="right"/>
+                            <!-- TODO: Move this field and finish its configuration when "column 0" is possible -->
+                        </tlabel:field>
+                        <tlabel:field field-name="flightRule">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}" >
+                                <tlabel:show-if flight-property="flightRule" property-value="${pasd.tar.tracklabel.flightrules.visible}" />
+                            </tlabel:visibility>
+                        </tlabel:field>
+                        <tlabel:field field-name="numberOfAircraft">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="aircraftType" toggleable="true" only-show-on-focus="true"/>
+                        <tlabel:field field-name="wakeTurbulenceCategory" toggleable="true" left-margin="-4">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="approachSequenceNumber" toggleable="true" placeholder="#_">
+                            <tlabel:context-menu-item context-menu="ManualSequencingMenu" mouse="right"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}">
+                                <tlabel:show-if flight-property="destinationAerodrome" property-value="${pasd.tar.tracklabel.manual.sequencing.aerodromes}" />
+                            </tlabel:visibility>
+                        </tlabel:field>
+                        <tlabel:field field-name="destinationRunway" toggleable="true" left-margin="-8">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.DestinationRWYMenu" mouse="right"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.aerodrome.info.relevant.cs}"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="reportedLevel" placeholder="AFL" visible-in-holding="true">
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.AFLMenu" mouse="right" menu-position="left"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="verticalRateArrow" left-margin="-8" fixed-width-in-characters="1">
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="verticalRate" left-margin="-4">
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="clearedFlightLevelOrApproach" placeholder="CFL">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.CFLMenu" mouse="right" searchable="true"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs} Redundant"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="assignedVerticalRate" placeholder="ARC">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.ARCMenu" mouse="right" searchable="true" menu-position="right"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="selectedAltitude" toggleable="true" placeholder="SFL">
+                            <tlabel:context-menu-item context-menu="Actions.LevelFilterAction" mouse="right" type="hold"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="speed" placeholder="SPD">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.ASPMenu" mouse="right" searchable="true"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="clearedSpeed" placeholder="ASP">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.ASPMenu" mouse="right" searchable="true"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <!-- TODO: conditional SPD -->
+                        <tlabel:field field-name="indicatedAirspeed" prefix="I" placeholder="DSPD" toggleable="true">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="clearedApproach"  placeholder="APP" toggleable="true">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.APPMenu" mouse="right" />
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs} Redundant"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="currentRouteElement" placeholder="ROUTE">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.WaypointMenu" mouse="right" menu-position="left"/>
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.HeadingMenu" mouse="left" menu-position="left" searchable="true"/>
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="nextRouteElement" prefix=">" toggleable="true" only-show-on-focus="true">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.WaypointMenu" mouse="right" menu-position="left"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="magneticHeading" placeholder="DHDG" toggleable="true" only-show-on-focus="true">
+                            <tlabel:context-menu-item context-menu="ClearanceMenu.HeadingMenu" mouse="right" searchable="true" menu-position="left"/>
+                        </tlabel:field>
+                        <tlabel:field field-name="barometricPressureSettings" toggleable="true">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="destinationAerodrome" toggleable="true">
+                            <tlabel:visibility when-unselected-for-control-states="${pasd.tar.tracklabel.unselected.relevant.cs}">
+                                    <tlabel:show-if flight-property="destinationAerodrome" property-value="BIRK" />
+                                </tlabel:visibility>
+                            </tlabel:field>
+                        <tlabel:field field-name="freeText" left-margin="-2">
+                            <tlabel:edit on-mouse="right"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                </tlabel:tracklabel>
+                <tlabel:tracklabel tracklabel-type="Ground">
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="callsign" toggleable="false" font-adjustment="+4" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="currentFlightLevel" toggleable="false"  />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="speed" toggleable="true"  />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="indicatedAirspeed" toggleable="true" only-show-on-focus="true" prefix="I" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="freeText">
+                            <tlabel:edit on-mouse="right"/>
+                        </tlabel:field>
+                    </tlabel:tracklabel-line>
+                </tlabel:tracklabel>
+                <tlabel:extended-tracklabel>
+                    <tlabel:tracklabel-line>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="requestedFlightLevel" placeholder="RFL" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="numberOfAircraft" />
+                        <tlabel:field field-name="ssrCode" placeholder="TSSR" />
+                        <tlabel:field field-name="previousSSRCode" placeholder="PSSR" />
+                        <tlabel:field field-name="assignedSSRCode" placeholder="ASSR" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="departureAerodrome" placeholder="ADEP"/>
+                        <tlabel:field field-name="actualDepartureTime" placeholder="ADT" />
+                        <tlabel:field field-name="alternativeDestinationAeroDrome" placeholder="ALTN" />
+                        <tlabel:field field-name="alternativeDestinationAeroDrome2" placeholder="ALTN2" />
+                    </tlabel:tracklabel-line>
+                    <tlabel:tracklabel-line>
+                        <tlabel:field field-name="route" />
+                    </tlabel:tracklabel-line>  
+                    <tlabel:tracklabel-line>
+                        <tlabel:field18>   
+                            <tlabel:field18-item type="STS" />
+                            <tlabel:field18-item type="RMK" />
+                        </tlabel:field18>
+                    </tlabel:tracklabel-line>
+                </tlabel:extended-tracklabel>
+                <tlabel:column-0-actions>
+                    <tlabel:action type="TransferAction" />
+                </tlabel:column-0-actions>
+            </tlabel:tracklabel-configuration>
+        </tlabel:configuration>
+    </instance>
+</instances>

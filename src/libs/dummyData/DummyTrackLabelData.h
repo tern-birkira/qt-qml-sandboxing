@@ -1,49 +1,23 @@
 #pragma once
 #include <QObject>
-#include <QString>
-#include <QList>
-#include <QVariant>
-#include "tracklabel.h" // The raw base class from your branch layout
+// #include "../../modules/tracklabel/models/FieldInterface.h"
+// #include "../../modules/tracklabel/models/RowCellModel.h"
+// #include "namespace_decl.h"
+#include "../../modules/tracklabel/models/RowListModel.h"
+// using namespace asd::editor::tracklabel;
+// using namespace asd::editor::tracklabelfield;
 
 namespace DummyData {
 
 /**
- * @brief Plain struct to hold parameters mapped exactly from the XML attributes
- */
-struct FieldConfigTemplate {
-    QString fieldName;
-    QString prefix;
-    QString placeholder;
-    bool toggleable;
-    bool blinking;
-    int fontAdjustment;
-    bool onlyShowOnFocus;
-    QVariant dummyValue;
-};
-
-/**
- * @brief Factory class to initialize and deliver pre-configured raw TrackLabel instances
+ * @brief Factory producing pre-configured RowListModel instances for each track label type.
+ *        Field data is sourced directly from tracklabel-config.xml.
  */
 class TrackLabelFactory {
 public:
-    /**
-     * @brief Generates a raw TrackLabel populated with the Uncorrelated configuration matrix
-     */
-    static TrackLabel* createUncorrelatedLabel(QObject *parent = nullptr);
-
-    /**
-     * @brief Generates a raw TrackLabel populated with the positionally merged Correlated + Extended matrix
-     */
-    static TrackLabel* createCorrelatedLabel(QObject *parent = nullptr);
-
-    /**
-     * @brief Generates a raw TrackLabel populated with the positionally merged FlightPlanTrack + Extended matrix
-     */
-    static TrackLabel* createFlightPlanLabel(QObject *parent = nullptr);
-
-private:
-    // Helper to abstract grid insertion logic depending on your TrackLabel setter implementation
-    static void populateLabelGrid(TrackLabel* label, const QList<QList<FieldConfigTemplate>>& gridData);
+    static asd::editor::tracklabel::RowListModel* createUncorrelatedLabel(QObject* parent = nullptr);
+    static asd::editor::tracklabel::RowListModel* createCorrelatedLabel(QObject* parent = nullptr);
+    static asd::editor::tracklabel::RowListModel* createFlightPlanLabel(QObject* parent = nullptr);
 };
 
 } // namespace DummyData

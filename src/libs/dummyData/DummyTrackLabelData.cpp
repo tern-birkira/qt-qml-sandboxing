@@ -1,198 +1,220 @@
 #include "DummyTrackLabelData.h"
 
+using namespace asd::editor::tracklabel;
+using namespace asd::editor::tracklabelfield;
+
 namespace DummyData {
 
-void TrackLabelFactory::populateLabelGrid(TrackLabel* label, const QList<QList<FieldConfigTemplate>>& gridData) {
-    if (!label) return;
+// Internal field configuration — maps directly to XML attributes
+struct FieldConfig {
+    QString fieldName;
+    QString prefix           = {};
+    QString placeholder      = {};
+    bool    toggleable       = false;
+    bool    onlyShowOnFocus  = false;
+    bool    visibleInHolding = false;
+    int     fontAdjustment   = 0;
+    int     fixedWidthInChars = -1;
+    int     leftMargin       = 0;
+};
 
-    // Implementation assumes standard 2D layout methods or loops matching your raw TrackLabel class setters.
-    // Example layout population:
-    for (int row = 0; row < gridData.size(); ++row) {
-        for (int col = 0; col < gridData[row].size(); ++col) {
-            const FieldConfigTemplate &f = gridData[row][col];
-            
-            // Map directly to your raw TrackLabel's internal data population functions, e.g.:
-            // label->setFieldConfig(row, col, f.fieldName, f.prefix, f.placeholder, f.toggleable, f.fontAdjustment, f.dummyValue);
-        }
-    }
+static FieldInterface* makeField(const FieldConfig& cfg, QObject* parent)
+{
+    auto* field = new FieldInterface(parent);
+    field->fieldText()->setFieldName(cfg.fieldName);
+    if (!cfg.prefix.isEmpty())       field->fieldText()->setPrefix(cfg.prefix);
+    if (!cfg.placeholder.isEmpty())  field->fieldText()->setPlaceholder(cfg.placeholder);
+    if (cfg.toggleable)              field->fieldAppearance()->setToggleable(true);
+    if (cfg.onlyShowOnFocus)         field->fieldAppearance()->setOnlyShowOnFocus(true);
+    if (cfg.visibleInHolding)        field->fieldAppearance()->setVisibleInHolding(true);
+    if (cfg.fontAdjustment != 0)     field->fieldLayout()->setFontAdjustment(cfg.fontAdjustment);
+    if (cfg.fixedWidthInChars >= 0)  field->fieldLayout()->setFixedWidthInCharacters(cfg.fixedWidthInChars);
+    if (cfg.leftMargin != 0)         field->fieldLayout()->setLeftMargin(cfg.leftMargin);
+    return field;
 }
 
-TrackLabel* TrackLabelFactory::createUncorrelatedLabel(QObject *parent) {
-    TrackLabel *label = new TrackLabel(parent);
+static RowCellModel* makeRow(const QList<FieldConfig>& cfgs)
+{
+    QVector<FieldInterface*> cells;
+    cells.reserve(cfgs.size());
+    for (const auto& cfg : cfgs)
+        cells.append(makeField(cfg, nullptr));
+    auto* row = new RowCellModel(cells, nullptr);
+    for (auto* f : cells)
+        f->setParent(row);
+    return row;
+}
 
-    // Mapped precisely from <tlabel:tracklabel tracklabel-type="Uncorrelated">
-    QList<QList<FieldConfigTemplate>> uncorrelatedGrid = {
+static RowListModel* buildModel(const QList<QList<FieldConfig>>& grid, QObject* parent)
+{
+    QVector<RowCellModel*> rows;
+    rows.reserve(grid.size());
+    for (const auto& rowCfg : grid)
+        rows.append(makeRow(rowCfg));
+    auto* model = new RowListModel(rows, parent);
+    for (auto* r : rows)
+        r->setParent(model);
+    return model;
+}
+
+// Extended lines 6-9 are shared between Correlated and FlightPlanTrack
+static QList<QList<FieldConfig>> extendedLines()
+{
+    return {
+        // Extended Line 6
+        {
+            { "numberOfAircraft" },
+            { "ssrCode",         "", "TSSR" },
+            { "previousSSRCode", "", "PSSR" },
+            { "assignedSSRCode", "", "ASSR" }
+        },
+        // Extended Line 7
+        {
+            { "departureAerodrome",               "", "ADEP"  },
+            { "actualDepartureTime",              "", "ADT"   },
+            { "alternativeDestinationAeroDrome",  "", "ALTN"  },
+            { "alternativeDestinationAeroDrome2", "", "ALTN2" }
+        },
+        // Extended Line 8
+        {
+            { "route" }
+        },
+        // Extended Line 9 — field18 items (STS / RMK)
+        {
+            { "field18", "", "STS/" },
+            { "field18", "", "RMK/" }
+        }
+    };
+}
+
+RowListModel* TrackLabelFactory::createUncorrelatedLabel(QObject* parent)
+{
+    return buildModel({
         // Line 1
         {
-            {"ssrCodeAndCallsign", "", "", false, false, 4, false, "2347/ICE425"},
-            {"snsInhibitedSsrDot", "", "", false, false, 0, false, ""}
+            { "ssrCodeAndCallsign", "", "", false, false, false, 4 },
+            { "snsInhibitedSsrDot" }
         },
         // Line 2
         {
-            {"currentFlightLevel", "", "AFL", false, false, 0, false, "350"},
-            {"verticalRateArrow", "", "", false, false, 0, false, "↑"},
-            {"verticalRate", "", "", false, false, 0, false, "↑1500"}
+            { "currentFlightLevel", "", "AFL" },
+            { "verticalRateArrow",  "", "", false, false, false, 0, 1, -4 },
+            { "verticalRate",       "", "", false, false, false, 0, -1, -5 }
         },
         // Line 3
         {
-            {"speed", "", "", true, false, 0, true, "M082"}
+            { "speed", "", "", true, true }
         },
         // Line 4
         {
-            {"indicatedAirspeed", "I", "", true, false, 0, true, "280"}
+            { "indicatedAirspeed", "I", "", true, true }
         },
         // Line 5
         {
-            {"freeText", "", "", false, false, 0, false, "RVSM APPROVED"}
+            { "freeText" }
         }
-    };
-
-    populateLabelGrid(label, uncorrelatedGrid);
-    return label;
+    }, parent);
 }
 
-TrackLabel* TrackLabelFactory::createCorrelatedLabel(QObject *parent) {
-    TrackLabel *label = new TrackLabel(parent);
-
-    // Mapped from Correlated layout + positionally blended fields from <tlabel:extended-tracklabel>
-    QList<QList<FieldConfigTemplate>> correlatedGrid = {
+RowListModel* TrackLabelFactory::createCorrelatedLabel(QObject* parent)
+{
+    QList<QList<FieldConfig>> grid = {
         // Line 1
         {
-            {"callsign", "", "", false, false, 4, false, "ICE425"},
-            {"snsInhibitedSsrDot", "", "", false, false, 0, false, ""},
-            {"currentControllingSector", "", "CS", false, false, 0, true, "BIRD_N"},
-            {"numberOfAircraft", "", "", false, false, 0, false, "1"},
-            {"aircraftType", "", "", true, false, 0, true, "B738"},
-            {"wakeTurbulenceCategory", "", "", true, false, 0, false, "M"},
-            {"approachSequenceNumber", "", "#_", true, false, 0, false, "3"},
-            {"destinationRunway", "", "", true, false, 0, false, "27L"}
+            { "callsign",                  "", "",   false, false, true,  4       },
+            { "snsInhibitedSsrDot" },
+            { "currentControllingSector",  "", "CS", false, true                 },
+            { "flightRule" },
+            { "numberOfAircraft" },
+            { "aircraftType",              "", "",   true,  true                 },
+            { "wakeTurbulenceCategory",    "", "",   true,  false, false, 0, -1, -4 },
+            { "approachSequenceNumber",    "", "#_", true                        },
+            { "destinationRunway",         "", "",   true,  false, false, 0, -1, -8 }
         },
-        // Line 2 (Base fields + positionally appended extended layout item "requestedFlightLevel")
+        // Line 2 — base fields + extended "requestedFlightLevel" merged at line position
         {
-            {"currentFlightLevel", "", "AFL", false, false, 0, false, "350"},
-            {"verticalRateArrow", "", "", false, false, 0, false, "↑"},
-            {"verticalRate", "", "", false, false, 0, false, "↑1500"},
-            {"clearedFlightLevelOrApproach", "", "CFL", false, false, 0, false, "FL350"},
-            {"assignedVerticalRate", "", "ARC", false, false, 0, false, "1500"},
-            {"selectedAltitude", "", "SFL", true, false, 0, false, "FL350"},
-            {"requestedFlightLevel", "", "RFL", false, false, 0, false, "FL390"} // Merged positionally from extended config
+            { "currentFlightLevel",          "", "AFL", false, false, true  },
+            { "verticalRateArrow",           "", "",   false, false, false, 0, 1,  -8 },
+            { "verticalRate",                "", "",   false, false, false, 0, -1, -4 },
+            { "clearedFlightLevelOrApproach","", "CFL" },
+            { "assignedVerticalRate",        "", "ARC" },
+            { "selectedAltitude",            "", "SFL", true },
+            { "requestedFlightLevel",        "", "RFL" }
         },
         // Line 3
         {
-            {"speed", "", "SPD", false, false, 0, false, "M082"},
-            {"clearedSpeed", "", "ASP", false, false, 0, false, "M082"},
-            {"indicatedAirspeed", "I", "DSPD", true, false, 0, false, "280"},
-            {"clearedApproach", "", "APP", true, false, 0, false, "ILS27L"}
+            { "speed",              "", "SPD"  },
+            { "clearedSpeed",       "", "ASP"  },
+            { "indicatedAirspeed",  "I","DSPD", true },
+            { "clearedApproach",    "", "APP",  true }
         },
         // Line 4
         {
-            {"currentRouteElement", "", "ROUTE", false, false, 0, false, "RATSU"},
-            {"nextRouteElement", ">", "", true, false, 0, true, "MIMKU"},
-            {"magneticHeading", "", "DHDG", true, false, 0, true, "093"},
-            {"barometricPressureSettings", "", "", true, false, 0, false, "1013"}
+            { "currentRouteElement",       "", "ROUTE" },
+            { "nextRouteElement",          ">","",      true, true },
+            { "magneticHeading",           "", "DHDG",  true, true },
+            { "barometricPressureSettings","", "",      true }
         },
         // Line 5
         {
-            {"destinationAerodrome", "", "", true, false, 0, false, "EGLL"},
-            {"freeText", "", "", false, false, 0, false, "RVSM APPROVED"}
-        },
-        // Extended Configuration Line 6
-        {
-            {"numberOfAircraft", "", "", false, false, 0, false, "1"},
-            {"ssrCode", "", "TSSR", false, false, 0, false, "2347"},
-            {"previousSSRCode", "", "PSSR", false, false, 0, false, "2346"},
-            {"assignedSSRCode", "", "ASSR", false, false, 0, false, "2347"}
-        },
-        // Extended Configuration Line 7
-        {
-            {"departureAerodrome", "", "ADEP", false, false, 0, false, "BIKF"},
-            {"actualDepartureTime", "", "ADT", false, false, 0, false, "1429"},
-            {"alternativeDestinationAeroDrome", "", "ALTN", false, false, 0, false, "EGKK"},
-            {"alternativeDestinationAeroDrome2", "", "ALTN2", false, false, 0, false, "EHAM"}
-        },
-        // Extended Configuration Line 8
-        {
-            {"route", "", "", false, false, 0, false, "DCT RATSU DCT"}
-        },
-        // Extended Configuration Line 9 (Field 18 compound mappings)
-        {
-            {"field18", "", "STS/", false, false, 0, false, "STS/HOSP"},
-            {"field18", "", "RMK/", false, false, 0, false, "RMK/TCAS AVBL"}
+            { "destinationAerodrome", "", "", true },
+            { "freeText" }
         }
     };
 
-    populateLabelGrid(label, correlatedGrid);
-    return label;
+    const auto ext = extendedLines();
+    grid.append(ext);
+    return buildModel(grid, parent);
 }
 
-TrackLabel* TrackLabelFactory::createFlightPlanLabel(QObject *parent) {
-    TrackLabel *label = new TrackLabel(parent);
-
-    // Mapped from FlightPlanTrack layout + positionally blended fields from <tlabel:extended-tracklabel>
-    QList<QList<FieldConfigTemplate>> flightPlanGrid = {
-        // Line 1
+RowListModel* TrackLabelFactory::createFlightPlanLabel(QObject* parent)
+{
+    QList<QList<FieldConfig>> grid = {
+        // Line 1 — no snsInhibitedSsrDot compared to Correlated
         {
-            {"callsign", "", "", false, false, 4, false, "ICE425"},
-            {"currentControllingSector", "", "CS", false, false, 0, true, "BIRD_N"},
-            {"numberOfAircraft", "", "", false, false, 0, false, "1"},
-            {"aircraftType", "", "", true, false, 0, true, "B738"},
-            {"wakeTurbulenceCategory", "", "", true, false, 0, false, "M"},
-            {"approachSequenceNumber", "", "#_", true, false, 0, false, "3"},
-            {"destinationRunway", "", "", true, false, 0, false, "27L"}
+            { "callsign",                 "", "",   false, false, true,  4       },
+            { "currentControllingSector", "", "CS", false, true                 },
+            { "flightRule" },
+            { "numberOfAircraft" },
+            { "aircraftType",             "", "",   true,  true                 },
+            { "wakeTurbulenceCategory",   "", "",   true,  false, false, 0, -1, -4 },
+            { "approachSequenceNumber",   "", "#_", true                        },
+            { "destinationRunway",        "", "",   true,  false, false, 0, -1, -8 }
         },
-        // Line 2 (Base fields incorporating "reportedLevel" instead of "currentFlightLevel" + Extended item "requestedFlightLevel")
+        // Line 2 — reportedLevel instead of currentFlightLevel + extended "requestedFlightLevel"
         {
-            {"reportedLevel", "", "AFL", false, false, 0, false, "FL350"},
-            {"verticalRateArrow", "", "", false, false, 0, false, "↑"},
-            {"verticalRate", "", "", false, false, 0, false, "↑1500"},
-            {"clearedFlightLevelOrApproach", "", "CFL", false, false, 0, false, "FL350"},
-            {"assignedVerticalRate", "", "ARC", false, false, 0, false, "1500"},
-            {"selectedAltitude", "", "SFL", true, false, 0, false, "FL350"},
-            {"requestedFlightLevel", "", "RFL", false, false, 0, false, "FL390"} // Merged positionally from extended config
+            { "reportedLevel",               "", "AFL", false, false, true  },
+            { "verticalRateArrow",           "", "",   false, false, false, 0, 1,  -8 },
+            { "verticalRate",                "", "",   false, false, false, 0, -1, -4 },
+            { "clearedFlightLevelOrApproach","", "CFL" },
+            { "assignedVerticalRate",        "", "ARC" },
+            { "selectedAltitude",            "", "SFL", true },
+            { "requestedFlightLevel",        "", "RFL" }
         },
         // Line 3
         {
-            {"speed", "", "SPD", false, false, 0, false, "M082"},
-            {"clearedSpeed", "", "ASP", false, false, 0, false, "M082"},
-            {"indicatedAirspeed", "I", "DSPD", true, false, 0, false, "280"},
-            {"clearedApproach", "", "APP", true, false, 0, false, "ILS27L"}
+            { "speed",             "", "SPD"  },
+            { "clearedSpeed",      "", "ASP"  },
+            { "indicatedAirspeed", "I","DSPD", true },
+            { "clearedApproach",   "", "APP",  true }
         },
         // Line 4
         {
-            {"currentRouteElement", "", "ROUTE", false, false, 0, false, "RATSU"},
-            {"nextRouteElement", ">", "", true, false, 0, true, "MIMKU"},
-            {"magneticHeading", "", "DHDG", true, false, 0, true, "093"},
-            {"barometricPressureSettings", "", "", true, false, 0, false, "1013"}
+            { "currentRouteElement",       "", "ROUTE" },
+            { "nextRouteElement",          ">","",      true, true },
+            { "magneticHeading",           "", "DHDG",  true, true },
+            { "barometricPressureSettings","", "",      true }
         },
         // Line 5
         {
-            {"destinationAerodrome", "", "", true, false, 0, false, "EGLL"},
-            {"freeText", "", "", false, false, 0, false, "RVSM APPROVED"}
-        },
-        // Extended Lines 6 through 9 follow structurally symmetric boundaries matching Correlated configuration
-        {
-            {"numberOfAircraft", "", "", false, false, 0, false, "1"},
-            {"ssrCode", "", "TSSR", false, false, 0, false, "2347"},
-            {"previousSSRCode", "", "PSSR", false, false, 0, false, "2346"},
-            {"assignedSSRCode", "", "ASSR", false, false, 0, false, "2347"}
-        },
-        {
-            {"departureAerodrome", "", "ADEP", false, false, 0, false, "BIKF"},
-            {"actualDepartureTime", "", "ADT", false, false, 0, false, "1429"},
-            {"alternativeDestinationAeroDrome", "", "ALTN", false, false, 0, false, "EGKK"},
-            {"alternativeDestinationAeroDrome2", "", "ALTN2", false, false, 0, false, "EHAM"}
-        },
-        {
-            {"route", "", "", false, false, 0, false, "DCT RATSU DCT"}
-        },
-        {
-            {"field18", "", "STS/", false, false, 0, false, "STS/HOSP"},
-            {"field18", "", "RMK/", false, false, 0, false, "RMK/TCAS AVBL"}
+            { "destinationAerodrome", "", "", true },
+            { "freeText" }
         }
     };
 
-    populateLabelGrid(label, flightPlanGrid);
-    return label;
+    const auto ext = extendedLines();
+    grid.append(ext);
+    return buildModel(grid, parent);
 }
 
 } // namespace DummyData

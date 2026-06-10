@@ -1,7 +1,7 @@
 #pragma once
 #include <QAbstractListModel>
 #include <QVector>
-#include <FieldInterface.h>
+#include "FieldInterface.h"
 #include <qabstractitemmodel.h>
 
 // ─────────────────────────────────────────────
