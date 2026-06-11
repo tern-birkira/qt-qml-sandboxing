@@ -3,6 +3,8 @@
 #include <QVector>
 #include "FieldInterface.h"
 #include <qabstractitemmodel.h>
+#include "FlightEnums.h"
+
 
 // ─────────────────────────────────────────────
 //  Inner model — owns all cells for ONE row.
@@ -48,9 +50,10 @@ public:
     // Interfaces
     bool validCell(int col);
     asd::editor::tracklabelfield::FieldInterface* popCell(int idx);
+    asd::editor::tracklabelfield::FieldInterface* cellAt(int idx);
     bool insertCell(int col, asd::editor::tracklabelfield::FieldInterface* cell);
     int cellCount();
-
+    void evalVisability();
 
     // // ── Cell-level mutations (called from QML delegates) ──
 

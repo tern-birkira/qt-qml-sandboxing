@@ -16,4 +16,5 @@ target_link_libraries(TrackLabelUI
     PRIVATE
         Qt6::Quick
         TrackLabelModels
+        common_types
 )

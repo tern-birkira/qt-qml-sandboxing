@@ -14,6 +14,7 @@
  * System header files
  */
 #include <QObject>
+#include <qtmetamacros.h>
 
 namespace asd::editor::tracklabelfield
 {
@@ -35,6 +36,7 @@ Q_OBJECT
 Q_PROPERTY( bool toggleable READ toggleable WRITE setToggleable NOTIFY toggleableChanged )
 Q_PROPERTY( bool onlyShowOnFocus READ onlyShowOnFocus WRITE setOnlyShowOnFocus NOTIFY onlyShowOnFocusChanged )
 Q_PROPERTY( bool visibleInHolding READ visibleInHolding WRITE setVisibleInHolding NOTIFY visibleInHoldingChanged )
+Q_PROPERTY( bool isVisable )
 
 public:
     explicit FieldAppearance( QObject *parent = nullptr );

@@ -2,6 +2,7 @@
 #include <QAbstractListModel>
 #include <QVector>
 #include <QQmlEngine>
+#include <qcontainerfwd.h>
 #include <qlist.h>
 #include "RowCellModel.h"
 
@@ -26,7 +27,8 @@ public:
         RowIdRole                            // stable per-row id
     };
 
-    explicit RowListModel(QVector<RowCellModel*> rows, QObject* parent = nullptr);
+    explicit RowListModel(QObject* parent = nullptr, QVector<RowCellModel*> rows = QVector<RowCellModel*>());
+
     ~RowListModel() override;
 
     // ── QAbstractListModel interface ──

@@ -14,6 +14,8 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.10)
 add_subdirectory(src/modules/tracklabel)
+add_subdirectory(src/modules/commontypes)
+add_subdirectory(src/modules/tracklabelfield)
 add_subdirectory(src/libs/dummyData)
 
 

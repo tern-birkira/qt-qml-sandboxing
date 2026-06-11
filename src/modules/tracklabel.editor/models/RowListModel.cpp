@@ -9,9 +9,10 @@
 
 namespace asd::editor::tracklabel 
 {
-RowListModel::RowListModel(QVector<RowCellModel*> rows, QObject* parent)
+RowListModel::RowListModel(QObject* parent, QVector<RowCellModel*> rows)
     : m_rows(rows), QAbstractListModel(parent)
 /*
+    If empty 
     Bare bones allocation, emits no signals, only sets internal data
     because view isn't connected to model during instatation.
 */

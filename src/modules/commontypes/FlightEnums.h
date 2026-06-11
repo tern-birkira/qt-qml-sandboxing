@@ -24,7 +24,7 @@ class FlightEnums : public QObject
 {
 Q_OBJECT
 public:
-    enum ControlState {
+    enum class ControlState {
         Unknown,
         NonConcerned,
         Concerned,
@@ -55,7 +55,7 @@ public:
     [[nodiscard]] static QString controlStateToString( ControlState controlState );
     [[nodiscard]] static ControlState stringToControlState( const std::string& controlStateAsString );
 
-    enum CoordinationState {
+    enum class CoordinationState {
         CoordinationState_NOT_SET,
         CoordinationState_None, // after MAC received, or MAC acknowledged
         Notifying, // after ABI sent

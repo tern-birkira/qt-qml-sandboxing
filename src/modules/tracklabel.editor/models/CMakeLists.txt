@@ -15,15 +15,16 @@ qt_add_qml_module(TrackLabelModels
     SOURCES
         RowCellModel.h  RowCellModel.cpp
         RowListModel.h  RowListModel.cpp
-        FieldAppearence.h  FieldAppearence.cpp
-        FieldInterface.h  FieldInterface.cpp
-        FieldText.h  FieldText.cpp
+        TrackLabelFieldEditor.h  TrackLabelFieldEditor.cpp
 )
 
 target_link_libraries(TrackLabelModels
     PUBLIC
         Qt6::Core
         Qt6::Qml
+        TrackLabelFieldLib
+    PRIVATE
+        common_types
 )
 
 # # Expose headers (needed for .cpp imports of other files)

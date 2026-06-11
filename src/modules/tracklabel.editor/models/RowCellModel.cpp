@@ -135,6 +135,17 @@ int RowCellModel::cellCount()
     return rowCount();
 }
 
+asd::editor::tracklabelfield::FieldInterface* RowCellModel::cellAt(int idx)
+/*
+    Returns a copy of the FieldInterFace instance
+*/
+{
+    if (!validCell(idx)) return nullptr;
+    return m_cells[idx];
+}
+
+
+
 // bool RowCellModel::setData(const QModelIndex& index, const QVariant& value, int role)
 // {
 //     if (!index.isValid() || index.row() >= m_cells.size())
